@@ -2,32 +2,38 @@
 #include "list.hpp"
 #include <iostream>
 
-int main() {
+void make_dynamic() {
+    Dynamic a = true;
+    Dynamic b = 5;
+    Dynamic c = 5.5;
+    Dynamic d = "hello world";
+
+    std::cout << "A: " << a << "\n";
+    std::cout << "B: " << b << "\n";
+    std::cout << "C: " << c << "\n";
+
+    d = "lel";
+
+    std::cout << "D: " << d << " -> " << d.GetSize() << "\n";
+}
+
+void make_list() {
     List list;
+    // Dynamic x = 5;
 
-    // Dynamic a = 5;
-    // Dynamic b = 2.5;
-    // Dynamic c = 6;
-    // Dynamic d = "hello";
-    // Dynamic e = true;
+    list.Add(5);
 
-    list.Add(true);
-    list.Add(true);
-    list.Add(true);
-    list.Add(true);
-    // list.Add("hi there");
-    // list.Add(a);
+    std::cout << "List length: " << list.Length() << "\n";
 
-    // a = "hi";
+    list.Print();
+    std::cout << "\n";
 
-    // list.Remove(1);
+    // list.ClearList();
+}
 
-    // Dynamic* first = list.Get(0);
-    // *first = "first changed";
-
-    // list.Print();
-    // std::cout << "\n";
-    // std::cout << "Length: " << list.Length() << "\n";
+int main() {
+    // make_dynamic();
+    make_list();
 
     return 0;
 }

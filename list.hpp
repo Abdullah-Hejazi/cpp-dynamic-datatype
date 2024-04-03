@@ -9,6 +9,7 @@ class List {
 
     public:
         List();
+        ~List();
 
         void Print();
 

@@ -8,6 +8,10 @@ List::List() {
     this->count = 0;
 }
 
+List::~List() {
+    this->ClearList();
+}
+
 void List::Print() {
     if (this->count == 0) {
         std::cout << "(Empty List)";
@@ -39,41 +43,75 @@ Dynamic* List::Get(int index) {
 }
 
 void List::Add(Dynamic d) {
+    switch(d.GetType()) {
+        case BOOL: {
+            this->Add(*(bool*)(d.GetValue()));
+            break;
+        }
+
+        case INTEGER: {
+            this->Add(*(int*)(d.GetValue()));
+            break;
+        }
+
+        case DOUBLE: {
+            this->Add(*(double*)(d.GetValue()));
+            break;
+        }
+
+        case STRING: {
+            this->Add((char*)(d.GetValue()));
+            break;
+        }
+    }
+}
+
+void List::Add(int value) {
     if (this->data == NULL) {
-        this->data = (Dynamic**)malloc(sizeof(Dynamic*));
+        this->data = new (Dynamic*);
     } else {
         this->data = (Dynamic**)realloc(this->data, (this->count + 1) * sizeof(Dynamic*));
     }
 
-    this->data[this->count] = (Dynamic*)malloc(sizeof(Dynamic));
-
-    this->data[this->count]->SetDynamic(d);
+    this->data[this->count] = new Dynamic(value);
 
     this->count++;
 }
 
-void List::Add(int value) {
-    Dynamic d = value;
-
-    this->Add(d);
-}
-
 void List::Add(double value) {
-    Dynamic d = value;
+    if (this->data == NULL) {
+        this->data = new (Dynamic*);
+    } else {
+        this->data = (Dynamic**)realloc(this->data, (this->count + 1) * sizeof(Dynamic*));
+    }
 
-    this->Add(d);
+    this->data[this->count] = new Dynamic(value);
+
+    this->count++;
 }
 
 void List::Add(bool value) {
-    Dynamic d = value;
+    if (this->data == NULL) {
+        this->data = new (Dynamic*);
+    } else {
+        this->data = (Dynamic**)realloc(this->data, (this->count + 1) * sizeof(Dynamic*));
+    }
 
-    this->Add(d);
+    this->data[this->count] = new Dynamic(value);
+
+    this->count++;
 }
 
 void List::Add(const char* value) {
-    Dynamic d = value;
+    if (this->data == NULL) {
+        this->data = new (Dynamic*);
+    } else {
+        this->data = (Dynamic**)realloc(this->data, (this->count + 1) * sizeof(Dynamic*));
+    }
 
-    this->Add(d);
+    this->data[this->count] = new Dynamic(value);
+
+    this->count++;
 }
 
 void List::Remove(int index) {
@@ -89,7 +127,9 @@ void List::Remove(int index) {
         return;
     }
 
-    free(this->data[index]);
+    this->data[index]->Clear();
+
+    delete this->data[index];
 
     for(int i = index+1; i < this->count; i++) {
         memcpy(this->data[i - 1], this->data[i], sizeof(*this->data[i]));
@@ -103,7 +143,15 @@ int List::Length() {
 }
 
 void List::ClearList() {
-    for(int i = this->count - 1; i >= 0; i--) {
-        this->Remove(i);
+    if (this->count == 0) {
+        return;
     }
+
+    for(int i = this->count; i >= 0; i--) {
+        this->data[i]->Clear();
+
+        delete (Dynamic*)this->data[i];
+    }
+
+    this->count = 0;
 }

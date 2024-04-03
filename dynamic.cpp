@@ -2,27 +2,25 @@
 #include <iostream>
 #include <cstring>
 
-Dynamic::Dynamic() {
-    this->value = NULL;
+Dynamic::Dynamic() { }
+
+Dynamic::~Dynamic() {
+    this->Clear();
 }
 
 Dynamic::Dynamic(bool value) {
-    this->value = NULL;
     this->SetBoolean(value);
 }
 
 Dynamic::Dynamic(int value) {
-    this->value = NULL;
     this->SetInteger(value);
 }
 
 Dynamic::Dynamic(double value) {
-    this->value = NULL;
     this->SetDouble(value);
 }
 
 Dynamic::Dynamic(const char* value) {
-    this->value = NULL;
     this->SetString(value);
 }
 
@@ -85,12 +83,9 @@ std::ostream& operator<<(std::ostream& os, const Dynamic& obj) {
 }
 
 void Dynamic::SetBoolean(const bool other) {
-    if (this->value != NULL) {
-        free(this->value);
-    }
+    this->Clear();
 
-    this->value = (bool*)malloc(sizeof(bool));
-    memcpy(this->value, &other, sizeof(other));
+    this->value = new bool(other);
 
     this->type = BOOL;
 
@@ -98,12 +93,9 @@ void Dynamic::SetBoolean(const bool other) {
 }
 
 void Dynamic::SetInteger(const int other) {
-    if (this->value != NULL) {
-        free(this->value);
-    }
+    this->Clear();
 
-    this->value = (int*)malloc(sizeof(int));
-    memcpy(this->value, &other, sizeof(other));
+    this->value = new int(other);
 
     this->type = INTEGER;
 
@@ -111,12 +103,9 @@ void Dynamic::SetInteger(const int other) {
 }
 
 void Dynamic::SetDouble(const double other) {
-    if (this->value != NULL) {
-        free(this->value);
-    }
+    this->Clear();
 
-    this->value = (double*)malloc(sizeof(double));
-    memcpy(this->value, &other, sizeof(other));
+    this->value = new double(other);
 
     this->type = DOUBLE;
 
@@ -124,17 +113,15 @@ void Dynamic::SetDouble(const double other) {
 }
 
 void Dynamic::SetString(const char* other) {
-    if (this->value != NULL) {
-        free(this->value);
-    }
+    this->Clear();
 
-    this->value = (char*)malloc(strlen(other));
+    this->value = new char[strlen(other) + 1];
 
     strcpy((char*)this->value, other);
 
     this->type = STRING;
 
-    this->size = sizeof(strlen(other));
+    this->size = strlen(other);
 }
 
 void Dynamic::SetDynamic(const Dynamic other) {
@@ -186,11 +173,39 @@ Dynamic& Dynamic::operator=(const char* other) {
     return *this;
 }
 
+Dynamic& Dynamic::operator=(const Dynamic other) {
+    this->SetDynamic(other);
+
+    return *this;
+}
 
 void Dynamic::Clear() {
-    free(this->value);
+    if (this->size == 0) {
+        return;
+    }
+
+    switch(this->type) {
+        case BOOL: {
+            delete (bool*) this->value;
+            break;
+        }
+        case INTEGER: {
+            delete (int*) this->value;
+            break;
+        }
+        case DOUBLE: {
+            delete (double*) this->value;
+            break;
+        }
+        case STRING: {
+            delete[] (char*) this->value;
+            break;
+        }
+    }
 
     this->value = NULL;
 
     this->type = NONE;
+
+    this->size = 0;
 }

@@ -24,6 +24,7 @@ class Dynamic {
         void* GetValue() const;
 
         Dynamic();
+        ~Dynamic();
         Dynamic(bool);
         Dynamic(int);
         Dynamic(double);
