@@ -2,21 +2,27 @@
 #include <iostream>
 #include <cstring>
 
-Dynamic::Dynamic() { }
+Dynamic::Dynamic() {
+    this->value = NULL;
+}
 
 Dynamic::Dynamic(bool value) {
+    this->value = NULL;
     this->SetBoolean(value);
 }
 
 Dynamic::Dynamic(int value) {
+    this->value = NULL;
     this->SetInteger(value);
 }
 
 Dynamic::Dynamic(double value) {
+    this->value = NULL;
     this->SetDouble(value);
 }
 
 Dynamic::Dynamic(const char* value) {
+    this->value = NULL;
     this->SetString(value);
 }
 
@@ -83,10 +89,9 @@ void Dynamic::SetBoolean(const bool other) {
         free(this->value);
     }
 
-    bool* newValue = new bool;
-    *newValue = other;
+    this->value = (bool*)malloc(sizeof(bool));
+    memcpy(this->value, &other, sizeof(other));
 
-    this->value = newValue;
     this->type = BOOL;
 
     this->size = sizeof(bool);
@@ -97,31 +102,33 @@ void Dynamic::SetInteger(const int other) {
         free(this->value);
     }
 
-    int* newValue = (int*)malloc(sizeof(int));
-    *newValue = other;
+    this->value = (int*)malloc(sizeof(int));
+    memcpy(this->value, &other, sizeof(other));
 
-    this->value = newValue;
     this->type = INTEGER;
 
     this->size = sizeof(int);
 }
 
 void Dynamic::SetDouble(const double other) {
-    free(this->value);
+    if (this->value != NULL) {
+        free(this->value);
+    }
 
-    double* newValue = new double;
-    *newValue = other;
+    this->value = (double*)malloc(sizeof(double));
+    memcpy(this->value, &other, sizeof(other));
 
-    this->value = newValue;
     this->type = DOUBLE;
 
     this->size = sizeof(double);
 }
 
 void Dynamic::SetString(const char* other) {
-    free(this->value);
+    if (this->value != NULL) {
+        free(this->value);
+    }
 
-    this->value = (char*)malloc(strlen(other) * sizeof(char));
+    this->value = (char*)malloc(strlen(other));
 
     strcpy((char*)this->value, other);
 
@@ -177,4 +184,13 @@ Dynamic& Dynamic::operator=(const char* other) {
     this->SetString(other);
 
     return *this;
+}
+
+
+void Dynamic::Clear() {
+    free(this->value);
+
+    this->value = NULL;
+
+    this->type = NONE;
 }

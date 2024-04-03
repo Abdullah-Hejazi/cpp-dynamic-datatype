@@ -3,6 +3,7 @@
 #include <iostream>
 
 enum Type {
+    NONE,
     BOOL,
     INTEGER,
     DOUBLE,
@@ -44,6 +45,8 @@ class Dynamic {
         void SetDouble(const double);
         void SetString(const char*);
         void SetDynamic(const Dynamic);
+
+        void Clear();
 };
 
 std::ostream& operator<<(std::ostream& os, const Dynamic& obj);
