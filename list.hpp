@@ -13,7 +13,7 @@ class List {
 
         void Print();
 
-        void Add(Dynamic);
+        void Add(Dynamic&);
         void Add(int);
         void Add(double);
         void Add(bool);

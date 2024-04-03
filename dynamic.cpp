@@ -180,7 +180,11 @@ Dynamic& Dynamic::operator=(const Dynamic other) {
 }
 
 void Dynamic::Clear() {
-    if (this->size == 0) {
+    if (this->size == 0 || this->type == NONE) {
+        return;
+    }
+
+    if (this->value == NULL) {
         return;
     }
 

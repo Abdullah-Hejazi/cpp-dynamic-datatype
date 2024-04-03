@@ -42,7 +42,7 @@ Dynamic* List::Get(int index) {
     return this->data[index];
 }
 
-void List::Add(Dynamic d) {
+void List::Add(Dynamic& d) {
     switch(d.GetType()) {
         case BOOL: {
             this->Add(*(bool*)(d.GetValue()));
@@ -92,12 +92,15 @@ void List::Add(double value) {
 
 void List::Add(bool value) {
     if (this->data == NULL) {
-        this->data = new (Dynamic*);
+        // this->data = new (Dynamic*);
+        this->data = (Dynamic**)malloc(sizeof(Dynamic*));
     } else {
         this->data = (Dynamic**)realloc(this->data, (this->count + 1) * sizeof(Dynamic*));
     }
 
-    this->data[this->count] = new Dynamic(value);
+    // this->data[this->count] = new Dynamic(value);
+    this->data[this->count] = (Dynamic*)malloc(sizeof(Dynamic));
+    this->data[this->count]->SetBoolean(value);
 
     this->count++;
 }
@@ -129,11 +132,11 @@ void List::Remove(int index) {
 
     this->data[index]->Clear();
 
-    delete this->data[index];
-
     for(int i = index+1; i < this->count; i++) {
         memcpy(this->data[i - 1], this->data[i], sizeof(*this->data[i]));
     }
+
+    free(this->data[index]);
 
     this->count--;
 }
@@ -147,11 +150,14 @@ void List::ClearList() {
         return;
     }
 
-    for(int i = this->count; i >= 0; i--) {
-        this->data[i]->Clear();
-
-        delete (Dynamic*)this->data[i];
+    for(int i = this->count - 1; i >= 0; i--) {
+        this->Remove(i);
     }
+
+
+    free(this->data);
+
+    this->data = NULL;
 
     this->count = 0;
 }
