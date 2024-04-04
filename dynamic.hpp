@@ -29,6 +29,7 @@ class Dynamic {
         Dynamic(int);
         Dynamic(double);
         Dynamic(const char*);
+        Dynamic(const Dynamic&);
 
         int GetInteger() const;
         double GetDouble() const;

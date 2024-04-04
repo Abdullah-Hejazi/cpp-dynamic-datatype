@@ -20,11 +20,19 @@ void make_dynamic() {
 void make_list() {
     List list;
 
-    list.Add(5);
-    list.Add(1);
-    list.Add(6);
+    Dynamic x = 5;
 
-    list.Remove(2);
+    list.Add(5);
+    list.Add(true);
+    list.Add(2.5);
+    list.Add("Hello");
+    list.Add(x);
+
+    list.Remove(0);
+
+    list.Print();
+
+    list.ClearList();
 }
 
 int main() {

@@ -1,151 +1,143 @@
 #include "list.hpp"
 #include "dynamic.hpp"
-#include <cstdlib>
-#include <cstring>
 
 List::List() {
-    this->data = NULL;
-    this->count = 0;
+	this->next = NULL;
+	this->value = NULL;
 }
 
 List::~List() {
-    this->ClearList();
-}
-
-void List::Print() {
-    if (this->count == 0) {
-        std::cout << "(Empty List)";
-        return;
-    }
-
-    for(int i = 0; i < this->count; i++) {
-        this->data[i]->Print();
-        if (i < this->count - 1) {
-            std::cout << ", ";
-        }
-    }
-}
-
-Dynamic* List::Get(int index) {
-    if (this->data == NULL) {
-        return NULL;
-    }
-
-    if (index >= this->count) {
-        return NULL;
-    }
-
-    if (index < 0) {
-        return NULL;
-    }
-
-    return this->data[index];
-}
-
-void List::Add(Dynamic& d) {
-    switch(d.GetType()) {
-        case BOOL: {
-            this->Add(*(bool*)(d.GetValue()));
-            break;
-        }
-
-        case INTEGER: {
-            this->Add(*(int*)(d.GetValue()));
-            break;
-        }
-
-        case DOUBLE: {
-            this->Add(*(double*)(d.GetValue()));
-            break;
-        }
-
-        case STRING: {
-            this->Add((char*)(d.GetValue()));
-            break;
-        }
-    }
-}
-
-void List::Add(bool value) {
-    this->Extend();
-
-    this->data[this->count] = new Dynamic(value);
-
-    this->count++;
-}
-
-void List::Add(int value) {
-    this->Extend();
-
-    this->data[this->count] = new Dynamic(value);
-
-    this->count++;
-}
-
-void List::Add(double value) {
-    this->Extend();
-
-    this->data[this->count] = new Dynamic(value);
-
-    this->count++;
-}
-
-void List::Add(const char* value) {
-    this->Extend();
-
-    this->data[this->count] = new Dynamic(value);
-
-    this->count++;
-}
-
-void List::Extend() {
-    if (this->data == NULL) {
-        this->data = new (Dynamic*);
-    } else {
-        this->data = (Dynamic**)realloc(this->data, (this->count + 1) * sizeof(Dynamic*));
-    }
-}
-
-void List::Remove(int index) {
-    if (this->data == NULL) {
-        return;
-    }
-
-    if (index >= this->count) {
-        return;
-    }
-
-    if (index < 0) {
-        return;
-    }
-
-    this->data[index]->Clear();
-
-    for(int i = index+1; i < this->count; i++) {
-        memcpy(this->data[i - 1], this->data[i], this->data[i]->GetSize());
-    }
-
-    delete this->data[index];
-
-    this->count--;
-}
-
-int List::Length() {
-    return this->count;
+	this->ClearList();
 }
 
 void List::ClearList() {
-    if (this->count == 0) {
-        return;
-    }
+	if (this->next != NULL) {
+		this->next->ClearList();
 
-    for(int i = this->count - 1; i >= 0; i--) {
-        this->Remove(i);
-    }
+		delete this->next;
+	}
 
-    free(this->data);
+	if (this->value != NULL) {
+		delete this->value;
+	}
 
-    this->data = NULL;
+	this->value = NULL;
 
-    this->count = 0;
+	this->next = NULL;
+}
+
+void List::Remove(int index) {
+	List* before = this;
+
+	if (index == 0) {
+		*this = *this->next;
+
+		before->next = NULL;
+
+		delete before;
+
+		return;
+	}
+
+	for(int i = 0; i < index - 1; i++) {
+		if (before == NULL || before->value == NULL) {
+			return;
+		}
+
+		before = before->next;
+	}
+
+	List* after = (before->next != NULL) ? before->next->next : NULL;
+
+	List* deletion = before->next;
+
+	if (deletion == NULL) {
+		return;
+	}
+
+	before->next = after;
+
+	deletion->next = NULL;
+
+	delete deletion;
+}
+
+Dynamic* List::Get(int index) {
+	return this->value;
+}
+
+int List::Length() {
+	List* list = this;
+	int counter = 0;
+
+	while(list->value != NULL) {
+		counter++;
+		list = list->next;
+	}
+
+	return counter;
+}
+
+void List::Print() {
+	List* list = this;
+
+	std::cout << "[";
+
+	while(list->value != NULL) {
+		list->value->Print();
+
+		if (list->next->value != NULL) {
+			std::cout << ", ";
+		}
+
+		list = list->next;
+	}
+
+	std::cout << "]\n";
+}
+
+List* List::GetLastNode() {
+	List* list = this;
+
+	while(list->next != NULL) {
+		list = list->next;
+	}
+
+	return list;
+}
+
+void List::Add(const bool val) {
+	List* last = this->GetLastNode();
+
+	last->value = new Dynamic(val);
+	last->next = new List();
+}
+
+void List::Add(const int val) {
+	List* last = this->GetLastNode();
+
+	last->value = new Dynamic(val);
+	last->next = new List();
+}
+
+void List::Add(const double val) {
+	List* last = this->GetLastNode();
+
+	last->value = new Dynamic(val);
+	last->next = new List();
+}
+
+void List::Add(const char* val) {
+	List* last = this->GetLastNode();
+
+	last->value = new Dynamic(val);
+	last->next = new List();
+}
+
+void List::Add(Dynamic val) {
+	List* last = this->GetLastNode();
+
+	last->value = new Dynamic(val);
+
+	last->next = new List();
 }

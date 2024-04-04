@@ -2,26 +2,52 @@
 #include <iostream>
 #include <cstring>
 
-Dynamic::Dynamic() { }
+Dynamic::Dynamic() {
+    this->value = NULL;
+}
 
 Dynamic::~Dynamic() {
     this->Clear();
 }
 
-Dynamic::Dynamic(bool value) {
-    this->SetBoolean(value);
+Dynamic::Dynamic(bool val) {
+    this->SetBoolean(val);
 }
 
-Dynamic::Dynamic(int value) {
-    this->SetInteger(value);
+Dynamic::Dynamic(int val) {
+    this->SetInteger(val);
 }
 
-Dynamic::Dynamic(double value) {
-    this->SetDouble(value);
+Dynamic::Dynamic(double val) {
+    this->SetDouble(val);
 }
 
-Dynamic::Dynamic(const char* value) {
-    this->SetString(value);
+Dynamic::Dynamic(const char* val) {
+    this->SetString(val);
+}
+
+Dynamic::Dynamic(const Dynamic& val) {
+    switch (val.GetType()) {
+         case BOOL: {
+             this->SetBoolean(*(bool*)val.GetValue());
+             break;
+         }
+
+         case INTEGER: {
+             this->SetInteger(*(int*)val.GetValue());
+             break;
+         }
+
+         case DOUBLE: {
+             this->SetDouble(*(double*)val.GetValue());
+             break;
+         }
+
+         case STRING: {
+             this->SetString((char*)val.GetValue());
+             break;
+         }
+    }
 }
 
 Type Dynamic::GetType() const {
