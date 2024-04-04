@@ -19,25 +19,12 @@ void make_dynamic() {
 
 void make_list() {
     List list;
-    Dynamic x = 5;
-    Dynamic y = true;
-    Dynamic z = 2.5;
-    Dynamic d = "hi there";
 
-    list.Add(x);
-    list.Add(y);
-    list.Add(z);
-    list.Add(d);
-    list.Add(d);
-    list.Add(d);
-    list.Add(d);
+    list.Add(5);
+    list.Add(1);
+    list.Add(6);
 
-    list.Remove();
-    std::cout << "List length: " << list.Length() << "\n";
-
-    std::cout << "List: ";
-    list.Print();
-    std::cout << "\n";
+    list.Remove(2);
 }
 
 int main() {

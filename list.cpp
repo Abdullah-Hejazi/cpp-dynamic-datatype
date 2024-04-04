@@ -66,12 +66,16 @@ void List::Add(Dynamic& d) {
     }
 }
 
+void List::Add(bool value) {
+    this->Extend();
+
+    this->data[this->count] = new Dynamic(value);
+
+    this->count++;
+}
+
 void List::Add(int value) {
-    if (this->data == NULL) {
-        this->data = new (Dynamic*);
-    } else {
-        this->data = (Dynamic**)realloc(this->data, (this->count + 1) * sizeof(Dynamic*));
-    }
+    this->Extend();
 
     this->data[this->count] = new Dynamic(value);
 
@@ -79,42 +83,27 @@ void List::Add(int value) {
 }
 
 void List::Add(double value) {
-    if (this->data == NULL) {
-        this->data = new (Dynamic*);
-    } else {
-        this->data = (Dynamic**)realloc(this->data, (this->count + 1) * sizeof(Dynamic*));
-    }
+    this->Extend();
 
     this->data[this->count] = new Dynamic(value);
-
-    this->count++;
-}
-
-void List::Add(bool value) {
-    if (this->data == NULL) {
-        // this->data = new (Dynamic*);
-        this->data = (Dynamic**)malloc(sizeof(Dynamic*));
-    } else {
-        this->data = (Dynamic**)realloc(this->data, (this->count + 1) * sizeof(Dynamic*));
-    }
-
-    // this->data[this->count] = new Dynamic(value);
-    this->data[this->count] = (Dynamic*)malloc(sizeof(Dynamic));
-    this->data[this->count]->SetBoolean(value);
 
     this->count++;
 }
 
 void List::Add(const char* value) {
+    this->Extend();
+
+    this->data[this->count] = new Dynamic(value);
+
+    this->count++;
+}
+
+void List::Extend() {
     if (this->data == NULL) {
         this->data = new (Dynamic*);
     } else {
         this->data = (Dynamic**)realloc(this->data, (this->count + 1) * sizeof(Dynamic*));
     }
-
-    this->data[this->count] = new Dynamic(value);
-
-    this->count++;
 }
 
 void List::Remove(int index) {
@@ -133,10 +122,10 @@ void List::Remove(int index) {
     this->data[index]->Clear();
 
     for(int i = index+1; i < this->count; i++) {
-        memcpy(this->data[i - 1], this->data[i], sizeof(*this->data[i]));
+        memcpy(this->data[i - 1], this->data[i], this->data[i]->GetSize());
     }
 
-    free(this->data[index]);
+    delete this->data[index];
 
     this->count--;
 }
@@ -153,7 +142,6 @@ void List::ClearList() {
     for(int i = this->count - 1; i >= 0; i--) {
         this->Remove(i);
     }
-
 
     free(this->data);
 

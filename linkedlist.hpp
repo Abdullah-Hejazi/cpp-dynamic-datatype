@@ -1,16 +1,15 @@
 #ifndef LIST_H
 #define LIST_H
-#include "dynamic.hpp"
+
+// Linked list implementation for the dynamic datatype
 
 class List {
-    private:
-        Dynamic** data = NULL;
-        int count = 0;
+	private:
+		Dynamic * value;
+		List* next;
 
-        void Extend();
-
-    public:
-        List();
+	public:
+		List();
         ~List();
 
         void Print();
