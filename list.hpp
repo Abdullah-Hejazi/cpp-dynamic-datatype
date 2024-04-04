@@ -11,7 +11,7 @@ class List {
 		List* next;
 
 	public:
-		List();
+        List();
         ~List();
 
         void Print();
@@ -23,6 +23,7 @@ class List {
         void Add(Dynamic);
 
         void Remove(int);
+        void RemoveFirst();
         List* GetLastNode();
         int Length();
         void ClearList();

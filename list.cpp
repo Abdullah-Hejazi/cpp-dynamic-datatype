@@ -26,16 +26,21 @@ void List::ClearList() {
 	this->next = NULL;
 }
 
+void List::RemoveFirst() {
+	if (this->next == NULL || this->next->value == NULL) {
+		this->ClearList();
+		return;
+	}
+
+	List* next = this->next;
+	List* current = this;
+}
+
 void List::Remove(int index) {
 	List* before = this;
 
 	if (index == 0) {
-		*this = *this->next;
-
-		before->next = NULL;
-
-		delete before;
-
+		this->RemoveFirst();
 		return;
 	}
 
