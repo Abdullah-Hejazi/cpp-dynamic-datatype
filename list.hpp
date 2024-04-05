@@ -1,14 +1,14 @@
 #include "dynamic.hpp"
+#include "node.hpp"
 
 #ifndef LIST_H
 #define LIST_H
 
-// Linked list implementation for the dynamic datatype
-
 class List {
 	private:
-		Dynamic * value;
-		List* next;
+		Node* head;
+        Node* tail;
+        int count;
 
 	public:
         List();
@@ -16,15 +16,14 @@ class List {
 
         void Print();
 
-        void Add(int);
-        void Add(double);
-        void Add(bool);
-        void Add(const char*);
-        void Add(Dynamic);
+        void Push(bool);
+        void Push(int);
+        void Push(double);
+        void Push(const char*);
+        void Push(Dynamic);
 
         void Remove(int);
         void RemoveFirst();
-        List* GetLastNode();
         int Length();
         void ClearList();
         Dynamic* Get(int);

@@ -2,8 +2,9 @@
 #include "dynamic.hpp"
 
 List::List() {
-	this->next = NULL;
-	this->value = NULL;
+	this->head = NULL;
+	this->tail = NULL;
+	this->count = 0;
 }
 
 List::~List() {
@@ -11,87 +12,78 @@ List::~List() {
 }
 
 void List::ClearList() {
-	if (this->next != NULL) {
-		this->next->ClearList();
+	Node* current = head;
 
-		delete this->next;
+	while(current != NULL) {
+		Node* temp = current;
+		current = current->next;
+
+		delete temp;
 	}
 
-	if (this->value != NULL) {
-		delete this->value;
-	}
-
-	this->value = NULL;
-
-	this->next = NULL;
-}
-
-void List::RemoveFirst() {
-	if (this->next == NULL || this->next->value == NULL) {
-		this->ClearList();
-		return;
-	}
-
-	List* next = this->next;
-	List* current = this;
+	this->count = 0;
+	this->head = NULL;
+	this->tail = NULL;
 }
 
 void List::Remove(int index) {
-	List* before = this;
-
-	if (index == 0) {
-		this->RemoveFirst();
+	if (index < 0 || index > this->count) {
 		return;
 	}
 
-	for(int i = 0; i < index - 1; i++) {
-		if (before == NULL || before->value == NULL) {
-			return;
-		}
+	if (this->head == NULL) {
+		return;
+	}
 
+	if (index == 0) {
+		Node* current = this->head;
+		this->head = this->head->next;
+
+		delete current;
+		this->count--;
+		return;
+	}
+
+	Node* before = head;
+
+	for(int i = 0; i < index - 1; i++) {
 		before = before->next;
 	}
 
-	List* after = (before->next != NULL) ? before->next->next : NULL;
+	Node* current = before->next;
 
-	List* deletion = before->next;
-
-	if (deletion == NULL) {
-		return;
-	}
+	Node* after = current->next;
 
 	before->next = after;
 
-	deletion->next = NULL;
+	current->next = NULL;
 
-	delete deletion;
+	delete current;
+
+	this->count--;
 }
 
 Dynamic* List::Get(int index) {
-	return this->value;
+	if (this->head == NULL) {
+		return NULL;
+	}
+
+	return this->head->Get();
 }
 
 int List::Length() {
-	List* list = this;
-	int counter = 0;
-
-	while(list->value != NULL) {
-		counter++;
-		list = list->next;
-	}
-
-	return counter;
+	return this->count;
 }
 
 void List::Print() {
-	List* list = this;
+	Node* list = head;
 
 	std::cout << "[";
 
-	while(list->value != NULL) {
-		list->value->Print();
+	while(list != NULL) {
+		list->Get()->Print();
 
-		if (list->next->value != NULL) {
+		if (list->next != NULL) {
 			std::cout << ", ";
 		}
 
@@ -101,48 +93,72 @@ void List::Print() {
 	std::cout << "]\n";
 }
 
-List* List::GetLastNode() {
-	List* list = this;
+void List::Push(bool val) {
+	if (this->head == NULL) {
+		this->head = new Node(val);
+		this->tail = this->head;
+		this->count++;
 
-	while(list->next != NULL) {
-		list = list->next;
+		return;
 	}
 
-	return list;
+	this->tail->next = new Node(val);
+	this->tail = this->tail->next;
+	this->count++;
 }
 
-void List::Add(const bool val) {
-	List* last = this->GetLastNode();
+void List::Push(int val) {
+	if (this->head == NULL) {
+		this->head = new Node(val);
+		this->tail = this->head;
+		this->count++;
 
-	last->value = new Dynamic(val);
-	last->next = new List();
+		return;
+	}
+
+	this->tail->next = new Node(val);
+	this->tail = this->tail->next;
+	this->count++;
 }
 
-void List::Add(const int val) {
-	List* last = this->GetLastNode();
+void List::Push(double val) {
+	if (this->head == NULL) {
+		this->head = new Node(val);
+		this->tail = this->head;
+		this->count++;
 
-	last->value = new Dynamic(val);
-	last->next = new List();
+		return;
+	}
+
+	this->tail->next = new Node(val);
+	this->tail = this->tail->next;
+	this->count++;
 }
 
-void List::Add(const double val) {
-	List* last = this->GetLastNode();
+void List::Push(const char* val) {
+	if (this->head == NULL) {
+		this->head = new Node(val);
+		this->tail = this->head;
+		this->count++;
 
-	last->value = new Dynamic(val);
-	last->next = new List();
+		return;
+	}
+
+	this->tail->next = new Node(val);
+	this->tail = this->tail->next;
+	this->count++;
 }
 
-void List::Add(const char* val) {
-	List* last = this->GetLastNode();
+void List::Push(Dynamic val) {
+	if (this->head == NULL) {
+		this->head = new Node(val);
+		this->tail = this->head;
+		this->count++;
 
-	last->value = new Dynamic(val);
-	last->next = new List();
-}
+		return;
+	}
 
-void List::Add(Dynamic val) {
-	List* last = this->GetLastNode();
-
-	last->value = new Dynamic(val);
-
-	last->next = new List();
+	this->tail->next = new Node(val);
+	this->tail = this->tail->next;
+	this->count++;
 }
